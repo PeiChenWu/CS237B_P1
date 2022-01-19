@@ -29,7 +29,11 @@ def get_bottleneck_dataset(model, img_dir, img_size):
         # bottleneck_x_l -> list of tensors with dimension [1, bottleneck_size]
         # bottleneck_y_l -> list of tensors with dimension [1, num_labels]
         # Fill in the parts indicated by #FILL#. No additional lines are required.
-
+        
+        x_i, y_i = train_img_gen[i]
+        bottleneck_x_l.append(x_i)
+        bottleneck_y_l.append(y_i)
+        
         ######### Your code ends here #########
 
     bottleneck_ds = tf.data.Dataset.from_tensor_slices(
