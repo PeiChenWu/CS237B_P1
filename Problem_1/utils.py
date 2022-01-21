@@ -51,69 +51,36 @@ def visualize_value_function(V):
     plt.imshow(V.T, origin="lower")
     plt.quiver(X, Y, u, v, pivot="middle")
     
+    
+    x_eye, sig = np.array([15, 7]), 1e0
+    w_fn = lambda x: np.exp(-np.linalg.norm(np.array(x) - x_eye) / sig ** 2 / 2)
+    
     u, v = [], []
     optimal_policy = [pts[0]]
-    next_pt = pts[0]
-    for pt in pts:
-        if next_pt[0] == pt[0] and next_pt[1] == pt[1]:
-            pt_min, pt_max = [0, 0], [m - 1, n - 1]
-            pt_right = np.clip(np.array(pt) + np.array([1, 0]), pt_min, pt_max)
-            pt_up = np.clip(np.array(pt) + np.array([0, 1]), pt_min, pt_max)
-            pt_left = np.clip(np.array(pt) + np.array([-1, 0]), pt_min, pt_max)
-            pt_down = np.clip(np.array(pt) + np.array([0, -1]), pt_min, pt_max)
-            next_pts = [pt_right, pt_up, pt_left, pt_down]
-            Vs = [V[next_pt[0], next_pt[1]] for next_pt in next_pts]
-            idx = np.argmax(Vs)
-            u.append(next_pts[idx][0] - pt[0])
-            v.append(next_pts[idx][1] - pt[1])
+    pt = pts[0]
+    while pt[0] != 19 or pt[1] != 9:
+        pt_min, pt_max = [0, 0], [m - 1, n - 1]
+        pt_right = np.clip(np.array(pt) + np.array([1, 0]), pt_min, pt_max)
+        pt_up = np.clip(np.array(pt) + np.array([0, 1]), pt_min, pt_max)
+        pt_left = np.clip(np.array(pt) + np.array([-1, 0]), pt_min, pt_max)
+        pt_down = np.clip(np.array(pt) + np.array([0, -1]), pt_min, pt_max)
+        next_pts = [pt_right, pt_up, pt_left, pt_down]
+        Vs = [V[next_pt[0], next_pt[1]] for next_pt in next_pts]
+        idx = np.argmax(Vs)
+        
+        rd = np.random.uniform(0,1)
+        if rd < w_fn(pt):
+            idx = int(np.random.choice(np.delete(np.array([0,1,2,3]), idx), size=1))
+            
+        u.append(next_pts[idx][0] - pt[0])
+        v.append(next_pts[idx][1] - pt[1])
 
-            optimal_policy.append(np.array([next_pts[idx][0],next_pts[idx][1]]))
-            next_pt = next_pts[idx]
+        optimal_policy.append(np.array([next_pts[idx][0],next_pts[idx][1]]))
+        pt = next_pts[idx]
 
+    plt.quiver(np.array(optimal_policy)[:-1,0],np.array(optimal_policy)[:-1,1], u, v,pivot="middle", color='red')
 
-    plt.quiver(np.array(optimal_policy)[:-1,0],np.array(optimal_policy)[:-1,1], u, v, pivot="middle", color='red')
-
-def visualize_value_function_optimal_policy(V):
-    """
-    Visualizes the value function given in V & computes the optimal action,
-    visualized as an arrow.
-
-    You need to call plt.show() yourself.
-
-    Args:
-        V: (np.array) the value function reshaped into a 2D array.
-    """
-    V = np.array(V)
-    assert V.ndim == 2
-    m, n = V.shape
-    pos2idx = np.arange(m * n).reshape((m, n))
-    X, Y = np.meshgrid(np.arange(m), np.arange(n))
-    pts = np.stack([X.reshape(-1), Y.reshape(-1)], -1)
-    u, v = [], []
-    optimal_policy = [pts[0]]
-    next_pt = pts[0]
-    for pt in pts:
-        if next_pt[0] == pt[0] and next_pt[1] == pt[1]:
-            pt_min, pt_max = [0, 0], [m - 1, n - 1]
-            pt_right = np.clip(np.array(pt) + np.array([1, 0]), pt_min, pt_max)
-            pt_up = np.clip(np.array(pt) + np.array([0, 1]), pt_min, pt_max)
-            pt_left = np.clip(np.array(pt) + np.array([-1, 0]), pt_min, pt_max)
-            pt_down = np.clip(np.array(pt) + np.array([0, -1]), pt_min, pt_max)
-            next_pts = [pt_right, pt_up, pt_left, pt_down]
-            Vs = [V[next_pt[0], next_pt[1]] for next_pt in next_pts]
-            idx = np.argmax(Vs)
-            u.append(next_pts[idx][0] - pt[0])
-            v.append(next_pts[idx][1] - pt[1])
-
-            optimal_policy.append(np.array([next_pts[idx][0],next_pts[idx][1]]))
-            next_pt = next_pts[idx]
-
-
-    plt.imshow(V.T, origin="lower")
-    plt.quiver(np.array(optimal_policy)[:-1,0],np.array(optimal_policy)[:-1,1], u, v, pivot="middle")
-
-
-
+    
 def make_transition_matrices(m, n, x_eye, sig):
     """
     Compute the transisiton matrices T, which maps a state probability vector to
