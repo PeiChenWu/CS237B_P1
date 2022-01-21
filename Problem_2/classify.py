@@ -26,6 +26,18 @@ def classify(model, test_dir):
         # break after 1 epoch
                 #pdb.set_trace()
 
+    num_test = test_img_gen.samples
+    correct_results = 0
+    for i in range(num_test):
+        x_i, y_i = next(test_img_gen)
+        pred = model(x_i)
+        if (np.argmax(pred)!=np.argmax(y_i)):
+            print(f'img: {i}')
+            print(y_i)
+            print(pred)
+        else:
+            correct_results+=1
+    accuracy = float(correct_results/num_test)
 
     ######### Your code ends here #########
 

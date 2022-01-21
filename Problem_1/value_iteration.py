@@ -14,6 +14,12 @@ def value_iteration(problem, reward, terminal_mask, gam):
 
     assert terminal_mask.ndim == 1 and reward.ndim == 2
 
+    ######### Pei #########
+    Ts = tf.convert_to_tensor(Ts,dtype=tf.float32)
+    mask = tf.cast(terminal_mask==0, dtype=tf.float32)
+    reward = tf.transpose(reward, perm=[1,0])
+    ######### Pei ###########
+    
     # perform value iteration
     for _ in range(1000):
         ######### Your code starts here #########
@@ -30,7 +36,15 @@ def value_iteration(problem, reward, terminal_mask, gam):
         # compute err = tf.linalg.norm(V_new - V_prev) as a breaking condition
 
         ######### Your code ends here ###########
-
+        
+        V_stack = tf.stack([V,V,V,V],-1)
+        V_stack = tf.transpose(V_stack, perm=[1,0])
+        V_prev = V
+        
+        V = tf.math.reduce_max(reward + tf.reshape(gam*(Ts@V_stack[:,:,None])*mask[None,:,None],[4,400]), axis=0)
+        
+        err = tf.linalg.norm(V-V_prev)
+        
         if err < 1e-7:
             break
 

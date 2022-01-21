@@ -36,6 +36,10 @@ def Q_learning(Q_network, reward_fn, is_terminal_fn, X, U, Xp, gam):
 
         # make sure to account for the reward, the terminal state and the
         # discount factor gam
+        
+        mask = tf.cast((tf.cast(is_terminal_fn(X_),tf.int32) == 0),tf.float32)
+        Q_start = reward_fn(X_,U_) + gam*(next_Q)*mask
+        l = tf.reduce_mean((Q_start-Q)**2)
 
         ######### Your code ends here ###########
 
@@ -47,6 +51,7 @@ def Q_learning(Q_network, reward_fn, is_terminal_fn, X, U, Xp, gam):
     # create the Adam optimizer with tensorflow keras
     # experiment with different learning rates [1e-4, 1e-3, 1e-2, 1e-1]
 
+    opt = tf.keras.optimizers.Adam(learning_rate=1e-4) 
 
     ######### Your code ends here ###########
 
@@ -56,7 +61,8 @@ def Q_learning(Q_network, reward_fn, is_terminal_fn, X, U, Xp, gam):
         # apply a single step of gradient descent to the Q_network variables
         # take a look at the tf.keras.optimizers
 
-
+        gs = opt.minimize(loss, Q_network.variables) # one step of GD
+        
         ######### Your code ends here ###########
 
 
@@ -96,6 +102,9 @@ def main():
             # remember that transition matrices have a shape [sdim, sdim]
             # remember that tf.random.categorical takes in the log of
             # probabilities, not the probabilities themselves
+            
+            T = Ts[u]
+            xp = tf.random.categorical(tf.math.log([T[x]]),1)
 
             ######### Your code ends here ###########
 
@@ -126,6 +135,12 @@ def main():
     # it needs to take in 2 state + 1 action input (3 inputs)
     # it needs to output a single value (batch x 1 output) - the Q-value
     # it should be 3 layers deep with
+    
+    inputs = tf.keras.layers.Input(shape=[3])
+    out = tf.keras.layers.Dense(64, activation="tanh")(inputs) 
+    out = tf.keras.layers.Dense(64, activation="tanh")(out) 
+    out = tf.keras.layers.Dense(1)(out)
+    Q_network = tf.keras.Model(inputs=[inputs], outputs=out)
 
     ######### Your code ends here ###########
 

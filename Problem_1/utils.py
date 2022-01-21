@@ -78,7 +78,7 @@ def visualize_value_function(V):
         optimal_policy.append(np.array([next_pts[idx][0],next_pts[idx][1]]))
         pt = next_pts[idx]
 
-    plt.quiver(np.array(optimal_policy)[:-1,0],np.array(optimal_policy)[:-1,1], u, v,pivot="middle", color='red')
+    plt.quiver(np.array(optimal_policy)[:-1,0],np.array(optimal_policy)[:-1,1], u, v, pivot="middle", color='red')
 
     
 def make_transition_matrices(m, n, x_eye, sig):
