@@ -4,7 +4,7 @@ import matplotlib
 import tensorflow as tf, numpy as np, matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from utils import generate_problem, visualize_value_function
+from utils import generate_problem, visualize_value_function, visualize_value_function_with_Stochasticity
 
 
 def value_iteration(problem, reward, terminal_mask, gam):
@@ -74,6 +74,11 @@ def main():
     plt.figure(213)
     visualize_value_function(np.array(V_opt).reshape((n, n)))
     plt.title("value iteration")
+    plt.show()
+
+    plt.figure(213)
+    visualize_value_function_with_Stochasticity(np.array(V_opt).reshape((n, n)))
+    plt.title("value iteration w. Stochasticity")
     plt.show()
 
 

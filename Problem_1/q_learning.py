@@ -4,7 +4,7 @@ import matplotlib
 import tensorflow as tf, numpy as np, matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from utils import map_chunked, generate_problem, visualize_value_function
+from utils import map_chunked, generate_problem, visualize_value_function, visualize_value_function_with_Stochasticity
 
 
 def Q_learning(Q_network, reward_fn, is_terminal_fn, X, U, Xp, gam):
@@ -51,7 +51,7 @@ def Q_learning(Q_network, reward_fn, is_terminal_fn, X, U, Xp, gam):
     # create the Adam optimizer with tensorflow keras
     # experiment with different learning rates [1e-4, 1e-3, 1e-2, 1e-1]
 
-    opt = tf.keras.optimizers.Adam(learning_rate=1e-4) 
+    opt = tf.keras.optimizers.Adam(learning_rate=1e-2) 
 
     ######### Your code ends here ###########
 
@@ -173,6 +173,15 @@ def main():
     visualize_value_function(V.numpy().reshape((n, n)))
     plt.colorbar()
     plt.show()
+
+    # visualize the result
+    plt.figure(120)
+    visualize_value_function_with_Stochasticity(V.numpy().reshape((n, n)))
+    plt.colorbar()
+    plt.show()
+
+
+
     ########################################################
 
 
