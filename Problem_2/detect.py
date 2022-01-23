@@ -49,8 +49,6 @@ def compute_brute_force_classification(model, image_path, nH=8, nW=8):
             pred = model(img)
             window_predictions[i,j,:] = tf.reshape(pred[0,:],[3])
 
-
-
     ######### Your code ends here #########
 
     return window_predictions
@@ -88,7 +86,7 @@ def compute_convolutional_KxK_classification(model, image_path):
     K = conv_model.layers[-1].output_shape[1]
     normarlized_img = np.expand_dims(normalize_resize_image(raw_image, IMG_SIZE), axis=0)
     pred = conv_model(normarlized_img)
-    pred = tf.reshape(pred, (K*K,2048))
+    pred = tf.reshape(pred, (K*K,2048)) # this operatin is recommended from handout
     logits_tensor = model.get_layer("classifier")
     predictionsKxK = logits_tensor(pred)
     
@@ -119,12 +117,12 @@ def compute_and_plot_saliency(model, image_path):
         # Fill in the parts indicated by #FILL#. No additional lines are
         # required.
         
-        img = tf.convert_to_tensor(np.expand_dims(normalize_resize_image(raw_image, IMG_SIZE), axis=0))
+        img = tf.expand_dims(normalize_resize_image(raw_image, IMG_SIZE), axis=0)
         t.watch(img)
         Sc = logits_model(img)
         top_class = tf.math.argmax(Sc[0])
         w = t.gradient(Sc, img) 
-        M = tf.math.reduce_max(tf.math.abs(w),axis=-1)[0]
+        M = tf.reduce_max(tf.math.abs(w),axis=-1)[0]
 
         ######### Your code ends here #########
 

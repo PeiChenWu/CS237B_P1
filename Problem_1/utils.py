@@ -102,7 +102,7 @@ def visualize_value_function_with_Stochasticity(V):
         Vs = [V[next_pt[0], next_pt[1]] for next_pt in next_pts]
         idx = np.argmax(Vs)
         
-        rd = np.random.uniform(0,1)
+        rd = np.random.uniform(0,1) # with w probabality, the storm will cause the drone to move in a uniformly random direction.
         if rd < w_fn(pt):
             idx = int(np.random.choice(np.delete(np.array([0,1,2,3]), idx), size=1))
             
